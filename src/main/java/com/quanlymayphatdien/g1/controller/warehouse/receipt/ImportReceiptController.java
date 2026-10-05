@@ -1,4 +1,3 @@
-
 package com.quanlymayphatdien.g1.controller.warehouse.receipt;
 
 import com.quanlymayphatdien.g1.dal.CategoryDAO;
@@ -67,17 +66,19 @@ public class ImportReceiptController extends HttpServlet {
     private final GeneratorDAO genDAO = new GeneratorDAO();
     private final UserDAO userDAO = new UserDAO();
 
-
-
     private static final int MAX_SERIAL_LENGTH = 100;
     private static final int MAX_NOTE_LENGTH = 500;
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        if (!isLoggedIn(request, response)) return;
+        if (!isLoggedIn(request, response)) {
+            return;
+        }
         String action = request.getParameter("action");
-        if (action == null || action.isEmpty()) action = "list";
+        if (action == null || action.isEmpty()) {
+            action = "list";
+        }
         try {
             switch (action) {
                 case "list":
@@ -118,7 +119,9 @@ public class ImportReceiptController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        if (!isLoggedIn(request, response)) return;
+        if (!isLoggedIn(request, response)) {
+            return;
+        }
         String action = request.getParameter("action");
         try {
             switch (action) {
@@ -171,7 +174,8 @@ public class ImportReceiptController extends HttpServlet {
                         response.sendError(HttpServletResponse.SC_FORBIDDEN);
                         return;
                     }
-                } catch (NumberFormatException ignored) {}
+                } catch (NumberFormatException ignored) {
+                }
             }
             whFilter = String.valueOf(scopedWarehouseId);
         }
@@ -181,7 +185,9 @@ public class ImportReceiptController extends HttpServlet {
 
         int totalItems = receiptDAO.countWithFilters(TYPE, statusFilter, whFilter, search, createdByFilter, null, loggedUser.getId());
         int totalPages = Math.max(1, (int) Math.ceil((double) totalItems / pageSize));
-        if (page > totalPages) page = totalPages;
+        if (page > totalPages) {
+            page = totalPages;
+        }
 
         List<Receipt> receiptList = receiptDAO.findWithFilters(
                 TYPE, statusFilter, whFilter, search, createdByFilter, null, page, pageSize, loggedUser.getId());
@@ -270,9 +276,11 @@ public class ImportReceiptController extends HttpServlet {
     }
 
     private void applyExportReceiptPrefillToRequest(HttpServletRequest request,
-Transfer transfer,
-                                                    Receipt exportReceipt) {
-        if (transfer == null || exportReceipt == null) return;
+            Transfer transfer,
+            Receipt exportReceipt) {
+        if (transfer == null || exportReceipt == null) {
+            return;
+        }
         request.setAttribute("transfer", transfer);
         request.setAttribute("transferCode", transfer.getTransferCode());
         request.setAttribute("exportReceipt", exportReceipt);
@@ -338,7 +346,9 @@ Transfer transfer,
         PurchaseOrderDAO dao = new PurchaseOrderDAO();
         int totalItems = dao.countApprovedAvailableFiltered(search, fromDate, toDate, filterWarehouseId);
         int totalPages = Math.max(1, (int) Math.ceil((double) totalItems / pageSize));
-        if (page > totalPages) page = totalPages;
+        if (page > totalPages) {
+            page = totalPages;
+        }
         List<PurchaseOrder> approvedPOs = dao.findApprovedAvailableFiltered(search, fromDate, toDate, filterWarehouseId, page, pageSize);
         int fromIndex = totalItems == 0 ? 0 : (page - 1) * pageSize + 1;
         int toIndex = Math.min(page * pageSize, totalItems);
@@ -374,7 +384,9 @@ Transfer transfer,
         User loggedUser = (User) session.getAttribute("loggedUser");
 
         Integer scopedWarehouseId = (Integer) session.getAttribute("scopedWarehouseId");
-        if (scopedWarehouseId == null) scopedWarehouseId = 0;
+        if (scopedWarehouseId == null) {
+            scopedWarehouseId = 0;
+        }
 
         TransferDAO tDAO = new TransferDAO();
         List<Transfer> transfers
@@ -436,7 +448,9 @@ Transfer transfer,
     }
 
     private void applyPoPrefillToRequest(HttpServletRequest request, PurchaseOrder po, String note) {
-        if (po == null) return;
+        if (po == null) {
+            return;
+        }
         request.setAttribute("purchaseOrder", po);
         request.setAttribute("fromPurchaseOrder", Boolean.TRUE);
         Receipt prefill = new Receipt();
@@ -453,7 +467,7 @@ Transfer transfer,
         if (pods != null) {
             for (PurchaseOrderDetail pod : pods) {
                 int qty = pod.getFinalQuantity() > 0 ? pod.getFinalQuantity()
-                         : (pod.getProposedQuantity() > 0 ? pod.getProposedQuantity() : 1);
+                        : (pod.getProposedQuantity() > 0 ? pod.getProposedQuantity() : 1);
                 poGenIds.add(pod.getGeneratorId());
                 poQtyMap.merge(pod.getGeneratorId(), qty, Integer::sum);
                 for (int k = 0; k < qty; k++) {
@@ -481,10 +495,14 @@ Transfer transfer,
         if (request.getAttribute("availableGenerators") == null) {
             List<Generator> poGenerators = new ArrayList<>();
             Map<Integer, Generator> allGenMap = new HashMap<>();
-            for (Generator g : genDAO.findAllActive()) allGenMap.put(g.getId(), g);
+            for (Generator g : genDAO.findAllActive()) {
+                allGenMap.put(g.getId(), g);
+            }
             for (Integer gid : poGenIds) {
                 Generator g = allGenMap.get(gid);
-                if (g != null) poGenerators.add(g);
+                if (g != null) {
+                    poGenerators.add(g);
+                }
             }
             request.setAttribute("availableGenerators", poGenerators);
             request.setAttribute("poQtyMap", poQtyMap);
@@ -506,9 +524,15 @@ Transfer transfer,
 
     private boolean isPoValid(HttpServletRequest request, int poId) {
         PurchaseOrder po = new PurchaseOrderDAO().findById(poId);
-        if (po == null) return false;
-        if (!"APPROVED".equalsIgnoreCase(po.getStatus())) return false;
-        if (!purchaseOrderBelongsToWarehouse(request, po)) return false;
+        if (po == null) {
+            return false;
+        }
+        if (!"APPROVED".equalsIgnoreCase(po.getStatus())) {
+            return false;
+        }
+        if (!purchaseOrderBelongsToWarehouse(request, po)) {
+            return false;
+        }
         request.setAttribute("purchaseOrder", po);
         applyPoPrefillToRequest(request, po, "Tạo từ phiếu purchase " + po.getPoCode());
         return true;
@@ -516,7 +540,9 @@ Transfer transfer,
 
     private boolean purchaseOrderBelongsToWarehouse(HttpServletRequest request, PurchaseOrder po) {
         String whParam = request.getParameter("warehouseId");
-        if (whParam == null || whParam.isEmpty()) return true;
+        if (whParam == null || whParam.isEmpty()) {
+            return true;
+        }
         try {
             int whId = Integer.parseInt(whParam.trim());
             return whId <= 0 || whId == po.getWarehouseId();
@@ -539,7 +565,7 @@ Transfer transfer,
         int expectedCount = 0;
         for (PurchaseOrderDetail pod : pods) {
             int qty = pod.getFinalQuantity() > 0 ? pod.getFinalQuantity()
-                     : (pod.getProposedQuantity() > 0 ? pod.getProposedQuantity() : 1);
+                    : (pod.getProposedQuantity() > 0 ? pod.getProposedQuantity() : 1);
             expectedCount += qty;
         }
 
@@ -611,9 +637,11 @@ Transfer transfer,
             poLoop:
             for (PurchaseOrderDetail pod : pods) {
                 int qty = pod.getFinalQuantity() > 0 ? pod.getFinalQuantity()
-                         : (pod.getProposedQuantity() > 0 ? pod.getProposedQuantity() : 1);
+                        : (pod.getProposedQuantity() > 0 ? pod.getProposedQuantity() : 1);
                 for (int k = 0; k < qty; k++) {
-                    if (serialIdx >= serialList.size()) break poLoop;
+                    if (serialIdx >= serialList.size()) {
+                        break poLoop;
+                    }
                     generatorIdsList.add(pod.getGeneratorId());
                     serialIdx++;
                 }
@@ -658,9 +686,13 @@ Transfer transfer,
 
     private boolean isAjaxRequest(HttpServletRequest request) {
         String xrw = request.getHeader("X-Requested-With");
-        if ("XMLHttpRequest".equals(xrw)) return true;
+        if ("XMLHttpRequest".equals(xrw)) {
+            return true;
+        }
         String qs = request.getQueryString();
-        if (qs != null && (qs.contains("ajax=1") || qs.contains("ajax=true"))) return true;
+        if (qs != null && (qs.contains("ajax=1") || qs.contains("ajax=true"))) {
+            return true;
+        }
         String ajax = request.getParameter("ajax");
         return "1".equals(ajax) || "true".equalsIgnoreCase(ajax);
     }
@@ -677,12 +709,14 @@ Transfer transfer,
         Map<Integer, Integer> expectedQty = new LinkedHashMap<>();
         for (PurchaseOrderDetail pod : po.getDetails()) {
             int qty = pod.getFinalQuantity() > 0 ? pod.getFinalQuantity()
-                     : (pod.getProposedQuantity() > 0 ? pod.getProposedQuantity() : 1);
+                    : (pod.getProposedQuantity() > 0 ? pod.getProposedQuantity() : 1);
             expectedQty.put(pod.getGeneratorId(), qty);
         }
         Map<Integer, Integer> actualQty = new LinkedHashMap<>();
         for (ReceiptDetail d : details) {
-            if (d.getGeneratorId() <= 0) continue;
+            if (d.getGeneratorId() <= 0) {
+                continue;
+            }
             actualQty.merge(d.getGeneratorId(), 1, Integer::sum);
         }
         for (Map.Entry<Integer, Integer> e : expectedQty.entrySet()) {
@@ -763,11 +797,16 @@ Transfer transfer,
         Generator g = genDAO.findAllActive().stream()
                 .filter(x -> x.getId() == generatorId)
                 .findFirst().orElse(null);
-        if (g == null) return "#" + generatorId;
+        if (g == null) {
+            return "#" + generatorId;
+        }
         String brand = "";
         if (g.getCategories() != null) {
             for (Category c : g.getCategories()) {
-                if ("brand".equals(c.getType())) { brand = c.getName(); break; }
+                if ("brand".equals(c.getType())) {
+                    brand = c.getName();
+                    break;
+                }
             }
         }
         return brand.isEmpty() ? g.getModel() : (g.getModel() + " (" + brand + ")");
@@ -781,11 +820,15 @@ Transfer transfer,
         int warehouseId = 0;
         Integer reasonId = null;
         try {
-            if (whStr != null && !whStr.isEmpty()) warehouseId = Integer.parseInt(whStr);
+            if (whStr != null && !whStr.isEmpty()) {
+                warehouseId = Integer.parseInt(whStr);
+            }
         } catch (NumberFormatException ignored) {
         }
         try {
-            if (reasonStr != null && !reasonStr.isEmpty()) reasonId = Integer.parseInt(reasonStr);
+            if (reasonStr != null && !reasonStr.isEmpty()) {
+                reasonId = Integer.parseInt(reasonStr);
+            }
         } catch (NumberFormatException ignored) {
         }
 
@@ -803,7 +846,9 @@ Transfer transfer,
                 String gid = manualGenIds[i] != null ? manualGenIds[i] : "";
                 String sn = (manualSerials != null && i < manualSerials.length) ? manualSerials[i] : "";
                 String nt = (manualNotes != null && i < manualNotes.length) ? manualNotes[i] : "";
-                if (gid.isEmpty() && sn.isEmpty() && nt.isEmpty()) continue;
+                if (gid.isEmpty() && sn.isEmpty() && nt.isEmpty()) {
+                    continue;
+                }
                 Map<String, String> r = new LinkedHashMap<>();
                 r.put("generatorId", gid);
                 r.put("serialNumber", sn);
@@ -839,7 +884,10 @@ Transfer transfer,
         HttpSession session = request.getSession(false);
         User loggedUser = (User) session.getAttribute("loggedUser");
         int id = parseId(request.getParameter("id"));
-        if (id <= 0) { response.sendRedirect(request.getContextPath() + "/import-receipt"); return; }
+        if (id <= 0) {
+            response.sendRedirect(request.getContextPath() + "/import-receipt");
+            return;
+        }
 
         Receipt receipt = receiptDAO.findById(id);
         if (receipt == null) {
@@ -873,15 +921,20 @@ Transfer transfer,
             int pageSize = 20;
             String pageStr = request.getParameter("page");
             if (pageStr != null && !pageStr.isEmpty()) {
-                try { page = Math.max(1, Integer.parseInt(pageStr)); }
-                catch (NumberFormatException ignored) { page = 1; }
+                try {
+                    page = Math.max(1, Integer.parseInt(pageStr));
+                } catch (NumberFormatException ignored) {
+                    page = 1;
+                }
             }
             List<ActivityLog> logs = activityLogDAO.findByEntityTypeAndId2("receipt", id, logSearch, logAction,
                     dateFrom, dateTo, page, pageSize);
             int totalLogs = activityLogDAO.countByEntityTypeAndId2("receipt", id, logSearch, logAction,
                     dateFrom, dateTo);
             int totalPages = Math.max(1, (int) Math.ceil((double) totalLogs / pageSize));
-            if (page > totalPages) page = totalPages;
+            if (page > totalPages) {
+                page = totalPages;
+            }
             request.setAttribute("logList", logs);
             request.setAttribute("logPage", page);
             request.setAttribute("logTotalPages", totalPages);
@@ -898,11 +951,15 @@ Transfer transfer,
         int detailPage = 1;
         String detailPageStr = request.getParameter("detailPage");
         if (detailPageStr != null && !detailPageStr.isEmpty()) {
-            try { detailPage = Math.max(1, Integer.parseInt(detailPageStr)); }
-            catch (NumberFormatException ignored) { }
+            try {
+                detailPage = Math.max(1, Integer.parseInt(detailPageStr));
+            } catch (NumberFormatException ignored) {
+            }
         }
         int detailTotalPages = Math.max(1, (int) Math.ceil((double) totalDetails / detailPageSize));
-        if (detailPage > detailTotalPages) detailPage = detailTotalPages;
+        if (detailPage > detailTotalPages) {
+            detailPage = detailTotalPages;
+        }
         List<ReceiptDetail> pagedDetails = new ArrayList<>();
         if (allDetails != null && !allDetails.isEmpty()) {
             int fromIndex = (detailPage - 1) * detailPageSize;
@@ -948,7 +1005,10 @@ Transfer transfer,
             String brand = "";
             if (g.getCategories() != null) {
                 for (Category c : g.getCategories()) {
-                    if ("brand".equals(c.getType())) { brand = c.getName(); break; }
+                    if ("brand".equals(c.getType())) {
+                        brand = c.getName();
+                        break;
+                    }
                 }
             }
             item.put("brand", brand);
@@ -978,17 +1038,26 @@ Transfer transfer,
         Integer reasonId = null;
         List<String> errors = new ArrayList<>();
 
-        if (warehouseId <= 0) errors.add("Vui lòng chọn kho");
+        if (warehouseId <= 0) {
+            errors.add("Vui lòng chọn kho");
+        }
         if (scopedWarehouseId > 0 && warehouseId > 0 && warehouseId != scopedWarehouseId) {
             errors.add("Bạn chỉ được phép tạo phiếu nhập cho kho của mình");
         }
-        if (note != null && note.length() > MAX_NOTE_LENGTH) errors.add("Ghi chú phiếu không được vượt quá " + MAX_NOTE_LENGTH + " ký tự");
+        if (note != null && note.length() > MAX_NOTE_LENGTH) {
+            errors.add("Ghi chú phiếu không được vượt quá " + MAX_NOTE_LENGTH + " ký tự");
+        }
 
         String reasonIdStr = request.getParameter("reasonId");
         if (reasonIdStr != null && !reasonIdStr.isEmpty()) {
-            try { reasonId = Integer.parseInt(reasonIdStr); }
-            catch (NumberFormatException e) { errors.add("Lý do không hợp lệ"); }
-        } else errors.add("Vui lòng chọn lý do");
+            try {
+                reasonId = Integer.parseInt(reasonIdStr);
+            } catch (NumberFormatException e) {
+                errors.add("Lý do không hợp lệ");
+            }
+        } else {
+            errors.add("Vui lòng chọn lý do");
+        }
 
         String[] genIds = request.getParameterValues("manualGeneratorId");
         String[] serials = request.getParameterValues("manualSerialNumber");
@@ -1054,7 +1123,9 @@ Transfer transfer,
                     }
                     String sn = (manualSerials != null && i < manualSerials.length) ? manualSerials[i] : "";
                     String nt = (manualNotes != null && i < manualNotes.length) ? manualNotes[i] : "";
-                    if ((gid == null || gid.isEmpty()) && (sn == null || sn.isEmpty()) && (nt == null || nt.isEmpty())) continue;
+                    if ((gid == null || gid.isEmpty()) && (sn == null || sn.isEmpty()) && (nt == null || nt.isEmpty())) {
+                        continue;
+                    }
                     Map<String, String> r = new LinkedHashMap<>();
                     r.put("generatorId", gid);
                     r.put("serialNumber", sn);
@@ -1158,7 +1229,8 @@ Transfer transfer,
         if (pid != null && !pid.isEmpty()) {
             try {
                 r.setPurchaseOrderId(Integer.parseInt(pid));
-            } catch (NumberFormatException ignored) {}
+            } catch (NumberFormatException ignored) {
+            }
         }
         if (isTransferImport && transferForImport != null) {
             r.setLinkedTransferId(transferForImport.getTransferId());
@@ -1291,7 +1363,7 @@ Transfer transfer,
     }
 
     private void redirectWithToast(HttpServletRequest request, HttpServletResponse response,
-                                    String message, String type, String redirectPath) throws IOException {
+            String message, String type, String redirectPath) throws IOException {
         HttpSession session = request.getSession(false);
         if (session != null) {
             session.setAttribute("toastMessage", message);
@@ -1355,7 +1427,7 @@ Transfer transfer,
             if (po.getWarehouseId() != warehouseId) {
                 forwardBackToCreate(request, response,
                         "Kho trong file Excel khác với kho của PO (PO yêu cầu kho "
-                                + po.getWarehouseId() + ")", "danger",
+                        + po.getWarehouseId() + ")", "danger",
                         warehouseId, reasonId, note);
                 return;
             }
@@ -1366,7 +1438,7 @@ Transfer transfer,
         if (rawRows.isEmpty()) {
             forwardBackToCreate(request, response,
                     "File Excel trống hoặc không đúng định dạng. Hãy dùng file mẫu (Tải mẫu Excel) với 3 cột: "
-                            + ReceiptExcelSupport.COL_MODEL + " | " + ReceiptExcelSupport.COL_SERIAL + " | " + ReceiptExcelSupport.COL_NOTE,
+                    + ReceiptExcelSupport.COL_MODEL + " | " + ReceiptExcelSupport.COL_SERIAL + " | " + ReceiptExcelSupport.COL_NOTE,
                     "danger", warehouseId, reasonId, note);
             return;
         }
@@ -1377,9 +1449,9 @@ Transfer transfer,
         if (!hasModelKey || !hasSerialKey) {
             forwardBackToCreate(request, response,
                     "File Excel thiếu cột bắt buộc. Cần có 2 cột: \""
-                            + ReceiptExcelSupport.COL_MODEL + "\" và \"" + ReceiptExcelSupport.COL_SERIAL + "\". "
-                            + "Có thể dùng tên thay thế: Model/Generator cho mã máy, Serial/SN cho số serial. "
-                            + "Hãy tải file mẫu và copy dữ liệu vào.",
+                    + ReceiptExcelSupport.COL_MODEL + "\" và \"" + ReceiptExcelSupport.COL_SERIAL + "\". "
+                    + "Có thể dùng tên thay thế: Model/Generator cho mã máy, Serial/SN cho số serial. "
+                    + "Hãy tải file mẫu và copy dữ liệu vào.",
                     "danger", warehouseId, reasonId, note);
             return;
         }
@@ -1519,7 +1591,9 @@ Transfer transfer,
             List<String> errorMessages = new ArrayList<>();
             for (Map<String, Object> inv : invalidRows) {
                 Object e = inv.get("_errors");
-                if (e != null) errorMessages.add("Dòng " + inv.get("rowNum") + ": " + e);
+                if (e != null) {
+                    errorMessages.add("Dòng " + inv.get("rowNum") + ": " + e);
+                }
             }
             body.put("message", "File Excel không có dòng hợp lệ nào. "
                     + String.join("; ", errorMessages));
@@ -1606,14 +1680,26 @@ Transfer transfer,
     }
 
     private int parseId(String s) {
-        if (s == null || s.isEmpty()) return 0;
-        try { return Integer.parseInt(s.trim()); } catch (NumberFormatException e) { return 0; }
+        if (s == null || s.isEmpty()) {
+            return 0;
+        }
+        try {
+            return Integer.parseInt(s.trim());
+        } catch (NumberFormatException e) {
+            return 0;
+        }
     }
 
     private int parsePage(String s) {
-        if (s == null || s.isEmpty()) return 1;
-        try { int p = Integer.parseInt(s); return p < 1 ? 1 : p; }
-        catch (NumberFormatException e) { return 1; }
+        if (s == null || s.isEmpty()) {
+            return 1;
+        }
+        try {
+            int p = Integer.parseInt(s);
+            return p < 1 ? 1 : p;
+        } catch (NumberFormatException e) {
+            return 1;
+        }
     }
 
     private Map<Integer, String> buildBrandMap(List<Generator> generators) {
@@ -1622,7 +1708,10 @@ Transfer transfer,
             String brand = "";
             if (g.getCategories() != null) {
                 for (Category c : g.getCategories()) {
-                    if ("brand".equals(c.getType())) { brand = c.getName(); break; }
+                    if ("brand".equals(c.getType())) {
+                        brand = c.getName();
+                        break;
+                    }
                 }
             }
             brandMap.put(g.getId(), brand);
@@ -1642,7 +1731,10 @@ Transfer transfer,
             String brand = "";
             if (g.getCategories() != null) {
                 for (Category c : g.getCategories()) {
-                    if ("brand".equals(c.getType())) { brand = c.getName(); break; }
+                    if ("brand".equals(c.getType())) {
+                        brand = c.getName();
+                        break;
+                    }
                 }
             }
             item.put("brand", brand);
@@ -1654,7 +1746,9 @@ Transfer transfer,
 
     private String buildErrorMessage(String prefix, List<String> errors) {
         StringBuilder msg = new StringBuilder(prefix);
-        for (String e : errors) msg.append(" ").append(e.replace("Dòng ", "dòng "));
+        for (String e : errors) {
+            msg.append(" ").append(e.replace("Dòng ", "dòng "));
+        }
         return msg.toString();
     }
 
@@ -1662,18 +1756,18 @@ Transfer transfer,
             List<Integer> emptyRows, List<String> blockedSerials) {
         StringBuilder msg = new StringBuilder();
         msg.append("Số serial hợp lệ trong file (").append(validCount)
-           .append(") không khớp với PO (yêu cầu ").append(expectedCount).append(").");
+                .append(") không khớp với PO (yêu cầu ").append(expectedCount).append(").");
         if (!emptyRows.isEmpty()) {
             msg.append(" Có ").append(emptyRows.size())
-               .append(" dòng trống serial: dòng ")
-               .append(emptyRows.stream().map(String::valueOf).collect(Collectors.joining(", ")))
-               .append(".");
+                    .append(" dòng trống serial: dòng ")
+                    .append(emptyRows.stream().map(String::valueOf).collect(Collectors.joining(", ")))
+                    .append(".");
         }
         if (!blockedSerials.isEmpty()) {
             msg.append(" Có ").append(blockedSerials.size())
-               .append(" serial không hợp lệ: ")
-               .append(String.join("; ", blockedSerials))
-               .append(".");
+                    .append(" serial không hợp lệ: ")
+                    .append(String.join("; ", blockedSerials))
+                    .append(".");
         }
         return msg.toString();
     }
@@ -1681,7 +1775,9 @@ Transfer transfer,
     private List<ReceiptDetail> parseDetailsStrict(String[] genIds, String[] serials,
             String[] detailNotes, List<String> errors) {
         List<ReceiptDetail> details = new ArrayList<>();
-        if (genIds == null) return details;
+        if (genIds == null) {
+            return details;
+        }
         Map<String, Integer> firstSeenRow = new LinkedHashMap<>();
         for (int i = 0; i < genIds.length; i++) {
             String idStr = genIds[i];
@@ -1689,18 +1785,29 @@ Transfer transfer,
             String detailNote = (detailNotes != null && i < detailNotes.length) ? detailNotes[i] : null;
             boolean rowEmpty = (idStr == null || idStr.trim().isEmpty())
                     && (serial == null || serial.trim().isEmpty());
-            if (rowEmpty) continue;
+            if (rowEmpty) {
+                continue;
+            }
             int rowNum = i + 1;
             int genId = 0;
-            try { genId = Integer.parseInt(idStr); }
-            catch (NumberFormatException e) { errors.add("Dòng " + rowNum + ": Vui lòng chọn máy phát điện"); continue; }
-            if (genId <= 0) { errors.add("Dòng " + rowNum + ": Vui lòng chọn máy phát điện"); continue; }
+            try {
+                genId = Integer.parseInt(idStr);
+            } catch (NumberFormatException e) {
+                errors.add("Dòng " + rowNum + ": Vui lòng chọn máy phát điện");
+                continue;
+            }
+            if (genId <= 0) {
+                errors.add("Dòng " + rowNum + ": Vui lòng chọn máy phát điện");
+                continue;
+            }
 
             if (serial != null) {
                 serial = serial.trim();
-                if (serial.isEmpty()) { serial = null; }
-                else if (serial.length() > MAX_SERIAL_LENGTH) {
-                    errors.add("Dòng " + rowNum + ": Số serial không được vượt quá " + MAX_SERIAL_LENGTH + " ký tự"); continue;
+                if (serial.isEmpty()) {
+                    serial = null;
+                } else if (serial.length() > MAX_SERIAL_LENGTH) {
+                    errors.add("Dòng " + rowNum + ": Số serial không được vượt quá " + MAX_SERIAL_LENGTH + " ký tự");
+                    continue;
                 } else {
                     Integer firstRow = firstSeenRow.get(serial);
                     if (firstRow != null) {
@@ -1711,12 +1818,17 @@ Transfer transfer,
                     firstSeenRow.put(serial, rowNum);
                 }
             }
-            if (serial == null) { errors.add("Dòng " + rowNum + ": Vui lòng nhập số serial"); continue; }
+            if (serial == null) {
+                errors.add("Dòng " + rowNum + ": Vui lòng nhập số serial");
+                continue;
+            }
             if (detailNote != null && detailNote.length() > MAX_NOTE_LENGTH) {
-                errors.add("Dòng " + rowNum + ": Ghi chú không được vượt quá " + MAX_NOTE_LENGTH + " ký tự"); continue;
+                errors.add("Dòng " + rowNum + ": Ghi chú không được vượt quá " + MAX_NOTE_LENGTH + " ký tự");
+                continue;
             }
             ReceiptDetail d = new ReceiptDetail();
-            d.setGeneratorId(genId); d.setSerialNumber(serial);
+            d.setGeneratorId(genId);
+            d.setSerialNumber(serial);
             d.setNote(detailNote);
             details.add(d);
         }
@@ -1724,11 +1836,15 @@ Transfer transfer,
     }
 
     private void notifySourceWarehouseStaff(Transfer transfer,
-                                            Receipt receipt, User sender, String contextPath) {
+            Receipt receipt, User sender, String contextPath) {
         List<User> staff = userDAO.findUsersByPermission("receipts", "view");
-        if (staff == null) return;
+        if (staff == null) {
+            return;
+        }
         for (User u : staff) {
-            if (u.getId() == sender.getId()) continue;
+            if (u.getId() == sender.getId()) {
+                continue;
+            }
             Integer scopedWh = null;
             try {
                 scopedWh = new UserDAO().getScopedWarehouseId(u.getId());
@@ -1740,8 +1856,8 @@ Transfer transfer,
                         u.getId(),
                         "Phiếu nhập đã hoàn tất",
                         "Kho đích đã tạo phiếu nhập " + receipt.getReceiptCode()
-                                + " cho phiếu luân chuyển " + transfer.getTransferCode()
-                                + ". Quá trình luân chuyển đã hoàn tất.",
+                        + " cho phiếu luân chuyển " + transfer.getTransferCode()
+                        + ". Quá trình luân chuyển đã hoàn tất.",
                         contextPath + "/transfers?action=detail&id=" + transfer.getTransferId(),
                         "transfer",
                         transfer.getTransferId()

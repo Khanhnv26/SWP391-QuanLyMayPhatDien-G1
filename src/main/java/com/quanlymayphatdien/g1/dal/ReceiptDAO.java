@@ -231,31 +231,59 @@ public class ReceiptDAO extends DBContext implements I_DAO<Receipt> {
             try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
                 ps.setString(1, r.getReceiptCode());
                 ps.setString(2, r.getReceiptType());
-                if (r.getOrderId() != null) ps.setInt(3, r.getOrderId());
-                else ps.setNull(3, Types.INTEGER);
-                if (r.getPurchaseOrderId() != null) ps.setInt(4, r.getPurchaseOrderId());
-                else ps.setNull(4, Types.INTEGER);
-                if (r.getLiquidationId() != null) ps.setInt(5, r.getLiquidationId());
-                else ps.setNull(5, Types.INTEGER);
-                if (r.getLinkedTransferId() != null) ps.setInt(6, r.getLinkedTransferId());
-                else ps.setNull(6, Types.INTEGER);
-                if (r.getRelatedExportReceiptId() != null) ps.setInt(7, r.getRelatedExportReceiptId());
-                else ps.setNull(7, Types.INTEGER);
+                if (r.getOrderId() != null) {
+                    ps.setInt(3, r.getOrderId());
+                } else {
+                    ps.setNull(3, Types.INTEGER);
+                }
+                if (r.getPurchaseOrderId() != null) {
+                    ps.setInt(4, r.getPurchaseOrderId());
+                } else {
+                    ps.setNull(4, Types.INTEGER);
+                }
+                if (r.getLiquidationId() != null) {
+                    ps.setInt(5, r.getLiquidationId());
+                } else {
+                    ps.setNull(5, Types.INTEGER);
+                }
+                if (r.getLinkedTransferId() != null) {
+                    ps.setInt(6, r.getLinkedTransferId());
+                } else {
+                    ps.setNull(6, Types.INTEGER);
+                }
+                if (r.getRelatedExportReceiptId() != null) {
+                    ps.setInt(7, r.getRelatedExportReceiptId());
+                } else {
+                    ps.setNull(7, Types.INTEGER);
+                }
                 ps.setInt(8, r.getWarehouseId());
                 ps.setInt(9, r.getCreatedBy());
                 ps.setString(10, status);
                 ps.setString(11, r.getNote());
-                if (r.getReasonId() != null) ps.setInt(12, r.getReasonId());
-                else ps.setNull(12, Types.INTEGER);
+                if (r.getReasonId() != null) {
+                    ps.setInt(12, r.getReasonId());
+                } else {
+                    ps.setNull(12, Types.INTEGER);
+                }
                 ps.setTimestamp(13, Timestamp.valueOf(LocalDateTime.now()));
-                if (r.getApprovedBy() != null) ps.setInt(14, r.getApprovedBy());
-                else ps.setNull(14, Types.INTEGER);
-                if (r.getApprovedAt() != null) ps.setTimestamp(15, Timestamp.valueOf(r.getApprovedAt()));
-                else ps.setNull(15, Types.TIMESTAMP);
+                if (r.getApprovedBy() != null) {
+                    ps.setInt(14, r.getApprovedBy());
+                } else {
+                    ps.setNull(14, Types.INTEGER);
+                }
+                if (r.getApprovedAt() != null) {
+                    ps.setTimestamp(15, Timestamp.valueOf(r.getApprovedAt()));
+                } else {
+                    ps.setNull(15, Types.TIMESTAMP);
+                }
                 int affectedRows = ps.executeUpdate();
-                if (affectedRows == 0) throw new SQLException("Không thể tạo phiếu");
+                if (affectedRows == 0) {
+                    throw new SQLException("Không thể tạo phiếu");
+                }
                 try (ResultSet rs = ps.getGeneratedKeys()) {
-                    if (!rs.next()) throw new SQLException("Không thể tạo phiếu, không lấy được ID");
+                    if (!rs.next()) {
+                        throw new SQLException("Không thể tạo phiếu, không lấy được ID");
+                    }
                     receiptId = rs.getInt(1);
                 }
             }
@@ -310,13 +338,22 @@ public class ReceiptDAO extends DBContext implements I_DAO<Receipt> {
             return receiptId;
         } catch (SQLException e) {
             if (conn != null) {
-                try { conn.rollback(); } catch (SQLException ex) { /* ignore */ }
+                try {
+                    conn.rollback();
+                } catch (SQLException ex) {
+                    /* ignore */ }
             }
             throw e;
         } finally {
             if (conn != null) {
-                try { conn.setAutoCommit(true); } catch (SQLException e) { /* ignore */ }
-                try { conn.close(); } catch (SQLException e) { /* ignore */ }
+                try {
+                    conn.setAutoCommit(true);
+                } catch (SQLException e) {
+                    /* ignore */ }
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    /* ignore */ }
             }
         }
     }
@@ -340,38 +377,68 @@ public class ReceiptDAO extends DBContext implements I_DAO<Receipt> {
             try (PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
                 ps.setString(1, r.getReceiptCode());
                 ps.setString(2, r.getReceiptType());
-                if (r.getOrderId() != null) ps.setInt(3, r.getOrderId());
-                else ps.setNull(3, Types.INTEGER);
-                if (r.getPurchaseOrderId() != null) ps.setInt(4, r.getPurchaseOrderId());
-                else ps.setNull(4, Types.INTEGER);
-                if (r.getLiquidationId() != null) ps.setInt(5, r.getLiquidationId());
-                else ps.setNull(5, Types.INTEGER);
-                if (r.getLinkedTransferId() != null) ps.setInt(6, r.getLinkedTransferId());
-                else ps.setNull(6, Types.INTEGER);
-                if (r.getRelatedExportReceiptId() != null) ps.setInt(7, r.getRelatedExportReceiptId());
-                else ps.setNull(7, Types.INTEGER);
+                if (r.getOrderId() != null) {
+                    ps.setInt(3, r.getOrderId());
+                } else {
+                    ps.setNull(3, Types.INTEGER);
+                }
+                if (r.getPurchaseOrderId() != null) {
+                    ps.setInt(4, r.getPurchaseOrderId());
+                } else {
+                    ps.setNull(4, Types.INTEGER);
+                }
+                if (r.getLiquidationId() != null) {
+                    ps.setInt(5, r.getLiquidationId());
+                } else {
+                    ps.setNull(5, Types.INTEGER);
+                }
+                if (r.getLinkedTransferId() != null) {
+                    ps.setInt(6, r.getLinkedTransferId());
+                } else {
+                    ps.setNull(6, Types.INTEGER);
+                }
+                if (r.getRelatedExportReceiptId() != null) {
+                    ps.setInt(7, r.getRelatedExportReceiptId());
+                } else {
+                    ps.setNull(7, Types.INTEGER);
+                }
                 ps.setInt(8, r.getWarehouseId());
                 ps.setInt(9, r.getCreatedBy());
                 ps.setString(10, status);
                 ps.setString(11, r.getNote());
-                if (r.getReasonId() != null) ps.setInt(12, r.getReasonId());
-                else ps.setNull(12, Types.INTEGER);
+                if (r.getReasonId() != null) {
+                    ps.setInt(12, r.getReasonId());
+                } else {
+                    ps.setNull(12, Types.INTEGER);
+                }
                 ps.setTimestamp(13, Timestamp.valueOf(LocalDateTime.now()));
-                if (r.getApprovedBy() != null) ps.setInt(14, r.getApprovedBy());
-                else ps.setNull(14, Types.INTEGER);
-                if (r.getApprovedAt() != null) ps.setTimestamp(15, Timestamp.valueOf(r.getApprovedAt()));
-                else ps.setNull(15, Types.TIMESTAMP);
+                if (r.getApprovedBy() != null) {
+                    ps.setInt(14, r.getApprovedBy());
+                } else {
+                    ps.setNull(14, Types.INTEGER);
+                }
+                if (r.getApprovedAt() != null) {
+                    ps.setTimestamp(15, Timestamp.valueOf(r.getApprovedAt()));
+                } else {
+                    ps.setNull(15, Types.TIMESTAMP);
+                }
                 int affectedRows = ps.executeUpdate();
-                if (affectedRows == 0) throw new SQLException("Không thể tạo phiếu");
+                if (affectedRows == 0) {
+                    throw new SQLException("Không thể tạo phiếu");
+                }
                 try (ResultSet rs = ps.getGeneratedKeys()) {
-                    if (!rs.next()) throw new SQLException("Không thể tạo phiếu, không lấy được ID");
+                    if (!rs.next()) {
+                        throw new SQLException("Không thể tạo phiếu, không lấy được ID");
+                    }
                     receiptId = rs.getInt(1);
                 }
             }
             InventoryDAO invDAO = new InventoryDAO();
             ReceiptDetailDAO detailDAO = new ReceiptDetailDAO();
             for (ReceiptDetail d : details) {
-                if (d.getSerialNumber() == null || d.getSerialNumber().trim().isEmpty()) continue;
+                if (d.getSerialNumber() == null || d.getSerialNumber().trim().isEmpty()) {
+                    continue;
+                }
                 String sn = d.getSerialNumber().trim();
                 Inventory inv = invDAO.findBySerialNumber(sn);
                 if (inv == null) {
@@ -415,21 +482,32 @@ public class ReceiptDAO extends DBContext implements I_DAO<Receipt> {
             return receiptId;
         } catch (SQLException e) {
             if (conn != null) {
-                try { conn.rollback(); } catch (SQLException ex) { /* ignore */ }
+                try {
+                    conn.rollback();
+                } catch (SQLException ex) {
+                    /* ignore */ }
             }
             throw e;
         } finally {
             if (conn != null) {
-                try { conn.setAutoCommit(true); } catch (SQLException e) { /* ignore */ }
-                try { conn.close(); } catch (SQLException e) { /* ignore */ }
+                try {
+                    conn.setAutoCommit(true);
+                } catch (SQLException e) {
+                    /* ignore */ }
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    /* ignore */ }
             }
         }
     }
 
     public void writeStockCardsForTransfer(Connection conn, int receiptId, String receiptCode,
-                                           int warehouseId, int createdBy,
-                                           List<ReceiptDetail> details) throws SQLException {
-        if (details == null || details.isEmpty()) return;
+            int warehouseId, int createdBy,
+            List<ReceiptDetail> details) throws SQLException {
+        if (details == null || details.isEmpty()) {
+            return;
+        }
         StockCardDAO scDAO = new StockCardDAO();
         Map<Integer, List<ReceiptDetail>> grouped = new LinkedHashMap<>();
         for (ReceiptDetail d : details) {
@@ -467,9 +545,8 @@ public class ReceiptDAO extends DBContext implements I_DAO<Receipt> {
     }
 
     // ===================== BÁO CÁO NHẬP / XUẤT =====================
-
     private String buildReportWhere(java.time.LocalDate from, java.time.LocalDate to,
-                                    Integer warehouseId, List<Object> params, String receiptType) {
+            Integer warehouseId, List<Object> params, String receiptType) {
         StringBuilder w = new StringBuilder(" WHERE r.receipt_type = ?");
         params.add(receiptType);
         // He thong khong co workflow duyet that su, dung created_at lam moc thoi gian
@@ -493,9 +570,10 @@ public class ReceiptDAO extends DBContext implements I_DAO<Receipt> {
             ps.setObject(i + 1, params.get(i));
         }
     }
+
     // Tổng quan: tổng phiếu, tổng máy, số phiếu theo trạng thái (chỉ tính COMPLETED/PENDING/CANCELLED).
     public Map<String, Object> getReportSummary(java.time.LocalDate from, java.time.LocalDate to,
-                                                Integer warehouseId, String receiptType) {
+            Integer warehouseId, String receiptType) {
         Map<String, Object> m = new java.util.HashMap<>();
         List<Object> params = new ArrayList<>();
         String where = buildReportWhere(from, to, warehouseId, params, receiptType);
@@ -547,7 +625,7 @@ public class ReceiptDAO extends DBContext implements I_DAO<Receipt> {
 
     // Phân tích theo kho: kho | số phiếu | số máy.
     public List<Map<String, Object>> getReportByWarehouse(java.time.LocalDate from, java.time.LocalDate to,
-                                                          Integer warehouseId, String receiptType) {
+            Integer warehouseId, String receiptType) {
         List<Map<String, Object>> list = new ArrayList<>();
         List<Object> params = new ArrayList<>();
         String where = buildReportWhere(from, to, warehouseId, params, receiptType);
@@ -583,7 +661,7 @@ public class ReceiptDAO extends DBContext implements I_DAO<Receipt> {
 
     // Phân tích theo trạng thái: trạng thái | số phiếu.
     public List<Map<String, Object>> getReportByStatus(java.time.LocalDate from, java.time.LocalDate to,
-                                                       Integer warehouseId, String receiptType) {
+            Integer warehouseId, String receiptType) {
         List<Map<String, Object>> list = new ArrayList<>();
         List<Object> params = new ArrayList<>();
         String where = buildReportWhere(from, to, warehouseId, params, receiptType);
@@ -612,7 +690,7 @@ public class ReceiptDAO extends DBContext implements I_DAO<Receipt> {
 
     // Xu hướng theo tháng: tháng (yyyy-MM) | số phiếu | số máy.
     public List<Map<String, Object>> getReportMonthlyTrend(java.time.LocalDate from, java.time.LocalDate to,
-                                                           Integer warehouseId, String receiptType) {
+            Integer warehouseId, String receiptType) {
         List<Map<String, Object>> list = new ArrayList<>();
         List<Object> params = new ArrayList<>();
         String where = buildReportWhere(from, to, warehouseId, params, receiptType);
@@ -646,8 +724,8 @@ public class ReceiptDAO extends DBContext implements I_DAO<Receipt> {
 
     // Chi tiết từng phiếu (gom GROUP BY receipt_id, mỗi dòng = 1 phiếu).
     public List<Map<String, Object>> getReportDetailList(java.time.LocalDate from, java.time.LocalDate to,
-                                                        Integer warehouseId, String receiptType,
-                                                        int limit, int offset) {
+            Integer warehouseId, String receiptType,
+            int limit, int offset) {
         List<Map<String, Object>> list = new ArrayList<>();
         List<Object> params = new ArrayList<>();
         String where = buildReportWhere(from, to, warehouseId, params, receiptType);
@@ -704,7 +782,7 @@ public class ReceiptDAO extends DBContext implements I_DAO<Receipt> {
     }
 
     public int countReportDetailList(java.time.LocalDate from, java.time.LocalDate to,
-                                     Integer warehouseId, String receiptType) {
+            Integer warehouseId, String receiptType) {
         List<Object> params = new ArrayList<>();
         String where = buildReportWhere(from, to, warehouseId, params, receiptType);
         String sql = "SELECT COUNT(*) FROM (SELECT r.receipt_id "
@@ -716,7 +794,9 @@ public class ReceiptDAO extends DBContext implements I_DAO<Receipt> {
             statement = connection.prepareStatement(sql);
             bindParams(statement, params);
             resultSet = statement.executeQuery();
-            if (resultSet.next()) return resultSet.getInt(1);
+            if (resultSet.next()) {
+                return resultSet.getInt(1);
+            }
         } catch (Exception e) {
             e.printStackTrace();
             System.err.println("Error countReportDetailList: " + e.getMessage());
@@ -728,9 +808,11 @@ public class ReceiptDAO extends DBContext implements I_DAO<Receipt> {
 
     // ===================== END BÁO CÁO NHẬP / XUẤT =====================
     public void writeStockCardsForImport(Connection conn, int receiptId, String receiptCode,
-                                         int warehouseId, int createdBy,
-                                         List<ReceiptDetail> details) throws SQLException {
-        if (details == null || details.isEmpty()) return;
+            int warehouseId, int createdBy,
+            List<ReceiptDetail> details) throws SQLException {
+        if (details == null || details.isEmpty()) {
+            return;
+        }
         StockCardDAO scDAO = new StockCardDAO();
         Map<Integer, List<ReceiptDetail>> grouped = new LinkedHashMap<>();
         for (ReceiptDetail d : details) {
@@ -766,10 +848,13 @@ public class ReceiptDAO extends DBContext implements I_DAO<Receipt> {
             scDAO.insert(conn, sc);
         }
     }
+
     public void writeStockCardsForExport(Connection conn, int receiptId, String receiptCode,
-                                         int warehouseId, int createdBy,
-                                         List<ReceiptDetail> details) throws SQLException {
-        if (details == null || details.isEmpty()) return;
+            int warehouseId, int createdBy,
+            List<ReceiptDetail> details) throws SQLException {
+        if (details == null || details.isEmpty()) {
+            return;
+        }
         StockCardDAO scDAO = new StockCardDAO();
         Map<Integer, List<ReceiptDetail>> grouped = new LinkedHashMap<>();
         for (ReceiptDetail d : details) {

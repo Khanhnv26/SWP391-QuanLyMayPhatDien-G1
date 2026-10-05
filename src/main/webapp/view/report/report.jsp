@@ -208,7 +208,7 @@
                                     <td><c:out value="${r.serialNumber}"/></td>
                                     <td><c:out value="${r.model}"/></td>
                                     <td><a href="${pageContext.request.contextPath}/export-receipt?action=detail&id=${r.receiptId}" class="code-link"><c:out value="${r.receiptCode}"/></a></td>
-                                    <td><c:choose><c:when test="${not empty r.orderId}"><a href="${pageContext.request.contextPath}/sales-order?action=detail&id=${r.orderId}" class="code-link"><c:out value="${r.orderCode}"/></a></c:when><c:otherwise><c:out value="${r.orderCode}"/></c:otherwise></c:choose></td>
+                                    <td><c:choose><c:when test="${not empty r.orderId}"><a href="${pageContext.request.contextPath}/order?action=detail&id=${r.orderId}" class="code-link"><c:out value="${r.orderCode}"/></a></c:when><c:otherwise><c:out value="${r.orderCode}"/></c:otherwise></c:choose></td>
                                     <td>${r.createdAt.format(rptFmt)}</td>
                                     <td><c:out value="${r.warehouseName}"/></td>
                                     <td><c:out value="${r.createdByName}"/></td>
@@ -303,7 +303,7 @@
                             <c:forEach var="so" items="${saleItems}" varStatus="st">
                                 <tr>
                                     <td>${st.index + 1 + (currentPage - 1) * 15}</td>
-                                    <td><a href="${pageContext.request.contextPath}/sales-order?action=detail&id=${so.orderId}" class="code-link"><c:out value="${so.orderCode}"/></a></td>
+                                    <td><a href="${pageContext.request.contextPath}/order?action=detail&id=${so.orderId}" class="code-link"><c:out value="${so.orderCode}"/></a></td>
                                     <td><c:out value="${so.warehouseName}"/></td>
                                     <td><c:out value="${so.customer.name}"/></td>
                                     <td class="num">${so.totalQuantity}</td>
