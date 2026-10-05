@@ -10,7 +10,7 @@
 
 ---
 
-## 📖 1. Giới thiệu tổng quan (Overview)
+## 1. Giới thiệu tổng quan (Overview)
 
 **Hệ thống Quản lý Kho Máy Phát Điện (GWMS)** là giải pháp phần mềm chuyên biệt phục vụ cho các doanh nghiệp phân phối, kinh doanh và lưu kho các dòng thiết bị máy phát điện công nghiệp và dân dụng. 
 
@@ -22,9 +22,9 @@ Khác với kho hàng tiêu dùng thông thường, quản lý kho máy phát đ
 
 ---
 
-## 🛠️ 2. Công nghệ sử dụng (Tech Stack)
+## 2. Công nghệ sử dụng (Tech Stack)
 
-### **Backend**
+### Backend
 * **Ngôn ngữ:** Java 17 LTS
 * **Nền tảng:** Jakarta EE 10 (Servlet API 6.0, JSP 3.1, JSTL 2.0)
 * **Kiến trúc:** MVC (Model - View - Controller) kết hợp DAO (Data Access Object) Pattern
@@ -37,12 +37,12 @@ Khác với kho hàng tiêu dùng thông thường, quản lý kho máy phát đ
   * `httpclient` (4.5.13): Gửi HTTP requests tích hợp
   * `lombok` (1.18.28): Tối ưu hóa code Model/Entity
 
-### **Frontend**
+### Frontend
 * **Giao diện:** HTML5, CSS3, JavaScript ES6
 * **Framework:** Bootstrap 5, Font Awesome Icons
 * **UI Components:** DataTables, Chart.js (thống kê Dashboard trực quan), SweetAlert2
 
-### **Cơ sở dữ liệu & Máy chủ**
+### Cơ sở dữ liệu & Máy chủ
 * **DBMS:** MySQL 8.0+ (InnoDB, UTF-8 Multilingual `utf8mb4`)
 * **JDBC Driver:** MySQL Connector/J 8.0.33
 * **Web Server:** Apache Tomcat 10.1.x *(Lưu ý: Bắt buộc dùng Tomcat 10.1+ do dự án sử dụng Jakarta EE 10 / servlet package `jakarta.*`)*
@@ -50,7 +50,7 @@ Khác với kho hàng tiêu dùng thông thường, quản lý kho máy phát đ
 
 ---
 
-## 🏗️ 3. Kiến trúc hệ thống (System Architecture)
+## 3. Kiến trúc hệ thống (System Architecture)
 
 Hệ thống được xây dựng theo mô hình phân tầng tiêu chuẩn trong phát triển phần mềm doanh nghiệp:
 
@@ -91,7 +91,7 @@ Sơ đồ đóng gói Package chi tiết của dự án (Package Diagram):
 
 ---
 
-## 📁 4. Cấu trúc thư mục dự án (Project Structure)
+## 4. Cấu trúc thư mục dự án (Project Structure)
 
 ```text
 SWP391-QuanLyMayPhatDien-G1/
@@ -141,28 +141,28 @@ SWP391-QuanLyMayPhatDien-G1/
 
 ---
 
-## 👥 5. Phân quyền và Chức năng hệ thống (RBAC)
+## 5. Phân quyền và Chức năng hệ thống (RBAC)
 
 Hệ thống được thiết kế theo cơ chế **Role-Based Access Control (RBAC)** với ma trận quyền hạn chi tiết:
 
 | Phân hệ / Vai trò | Admin | Warehouse Manager (Quản lý kho) | Warehouse Staff (Nhân viên kho) | Sales Manager (TP Kinh doanh) | Sales Staff (NV Kinh doanh) | CEO (Giám đốc) |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
-| **Quản trị người dùng & Phân quyền** | ✅ Toàn quyền | ❌ | ❌ | ❌ | ❌ | ❌ |
-| **Quản lý danh mục & Máy phát điện** | ✅ | ✅ | 👁️ Xem | 👁️ Xem | 👁️ Xem | 👁️ Xem |
-| **Đề xuất mua sắm (Import Proposal)** | ✅ | ✅ Lập / Duyệt | ❌ | ❌ | ❌ | 👁️ Xem |
-| **Đơn đặt hàng mua (Purchase Order)** | ✅ | ✅ Lập / Quản lý| ❌ | ❌ | ❌ | 👁️ Xem |
-| **Phiếu nhập kho (Import Receipt)** | ✅ | ✅ Phê duyệt | ✅ Tạo / Quét Serial | ❌ | ❌ | 👁️ Xem |
-| **Đơn bán hàng (Sale Order)** | ✅ | 👁️ Xem | ❌ | ✅ Phê duyệt | ✅ Tạo đơn | 👁️ Xem |
-| **Phiếu xuất kho (Export Receipt)** | ✅ | ✅ Phê duyệt | ✅ Xuất / Quét Serial | ❌ | ❌ | 👁️ Xem |
-| **Điều chuyển kho (Transfer)** | ✅ | ✅ Lập / Duyệt | ✅ Xuất / Nhập | ❌ | ❌ | 👁️ Xem |
-| **Kiểm kê kho (Inventory Check)** | ✅ | ✅ Duyệt cân đối| ✅ Lập phiếu đếm | ❌ | ❌ | 👁️ Xem |
-| **Thẻ kho (Stock Card)** | ✅ | ✅ Xem / Xuất file| ✅ Xem | ❌ | ❌ | 👁️ Xem |
-| **Thanh lý thiết bị (Liquidation)** | ✅ | ✅ Lập đề xuất | ❌ | ❌ | ❌ | ✅ Phê duyệt cấp cao |
-| **Báo cáo & Thống kê chuyên sâu** | ✅ | ✅ Báo cáo Kho | ❌ | ✅ Báo cáo Doanh số| ❌ | ✅ Báo cáo Toàn diện |
+| **Quản trị người dùng & Phân quyền** | Toàn quyền | Không | Không | Không | Không | Không |
+| **Quản lý danh mục & Máy phát điện** | Có | Có | Xem | Xem | Xem | Xem |
+| **Đề xuất mua sắm (Import Proposal)** | Có | Lập / Duyệt | Không | Không | Không | Xem |
+| **Đơn đặt hàng mua (Purchase Order)** | Có | Lập / Quản lý| Không | Không | Không | Xem |
+| **Phiếu nhập kho (Import Receipt)** | Có | Phê duyệt | Tạo / Quét Serial | Không | Không | Xem |
+| **Đơn bán hàng (Sale Order)** | Có | Xem | Không | Phê duyệt | Tạo đơn | Xem |
+| **Phiếu xuất kho (Export Receipt)** | Có | Phê duyệt | Xuất / Quét Serial | Không | Không | Xem |
+| **Điều chuyển kho (Transfer)** | Có | Lập / Duyệt | Xuất / Nhập | Không | Không | Xem |
+| **Kiểm kê kho (Inventory Check)** | Có | Duyệt cân đối| Lập phiếu đếm | Không | Không | Xem |
+| **Thẻ kho (Stock Card)** | Có | Xem / Xuất file| Xem | Không | Không | Xem |
+| **Thanh lý thiết bị (Liquidation)** | Có | Lập đề xuất | Không | Không | Không | Phê duyệt cấp cao |
+| **Báo cáo & Thống kê chuyên sâu** | Có | Báo cáo Kho | Không | Báo cáo Doanh số| Không | Báo cáo Toàn diện |
 
 ---
 
-## 🔄 6. Quy trình nghiệp vụ cốt lõi (Core Business Workflows)
+## 6. Quy trình nghiệp vụ cốt lõi (Core Business Workflows)
 
 ### 6.1. Quy trình Mua sắm & Nhập kho Máy phát điện
 
@@ -212,7 +212,7 @@ flowchart TD
 
 ---
 
-## 🔑 7. Tài khoản thử nghiệm hệ thống (Default Demo Accounts)
+## 7. Tài khoản thử nghiệm hệ thống (Default Demo Accounts)
 
 Sau khi nhập cơ sở dữ liệu từ file `database/database now.sql`, bạn có thể đăng nhập thử nghiệm với các tài khoản được cấu hình sẵn theo từng vai trò:
 
@@ -229,9 +229,9 @@ Sau khi nhập cơ sở dữ liệu từ file `database/database now.sql`, bạn
 
 ---
 
-## 🚀 8. Hướng dẫn Cài đặt & Khởi chạy (Installation & Setup)
+## 8. Hướng dẫn Cài đặt & Khởi chạy (Installation & Setup)
 
-### **8.1. Yêu cầu môi trường (Prerequisites)**
+### 8.1. Yêu cầu môi trường (Prerequisites)
 * **Java Development Kit (JDK):** Phiên bản **17** trở lên.
 * **Cơ sở dữ liệu:** **MySQL Server 8.0** trở lên (khuyên dùng kết hợp MySQL Workbench hoặc DBeaver / Navicat).
 * **Web Server:** **Apache Tomcat 10.1.x** (Bắt buộc phiên bản 10.1.x, **không** sử dụng Tomcat 9 hoặc cũ hơn).
@@ -240,7 +240,7 @@ Sau khi nhập cơ sở dữ liệu từ file `database/database now.sql`, bạn
 
 ---
 
-### **8.2. Bước 1: Khởi tạo Cơ sở dữ liệu MySQL**
+### 8.2. Bước 1: Khởi tạo Cơ sở dữ liệu MySQL
 
 1. Mở **MySQL Workbench** hoặc dòng lệnh MySQL:
 ```bash
@@ -259,10 +259,10 @@ Script sẽ tự động:
 
 ---
 
-### **8.3. Bước 2: Cấu hình kết nối Cơ sở dữ liệu**
+### 8.3. Bước 2: Cấu hình kết nối Cơ sở dữ liệu
 
 Mở file mã nguồn:
-👉 `src/main/java/com/quanlymayphatdien/g1/dal/DBContext.java`
+`src/main/java/com/quanlymayphatdien/g1/dal/DBContext.java`
 
 Kiểm tra và cập nhật thông tin tài khoản MySQL của máy bạn (nếu mật khẩu khác mặc định):
 ```java
@@ -286,9 +286,9 @@ public class DBContext {
 
 ---
 
-### **8.4. Bước 3: Build và Chạy ứng dụng trên IDE**
+### 8.4. Bước 3: Build và Chạy ứng dụng trên IDE
 
-#### **Cách 1: Sử dụng Apache NetBeans (Khuyên dùng)**
+#### Cách 1: Sử dụng Apache NetBeans (Khuyên dùng)
 1. Mở NetBeans $\rightarrow$ **File** $\rightarrow$ **Open Project...** $\rightarrow$ Chọn thư mục `SWP391-QuanLyMayPhatDien-G1`.
 2. Chuột phải vào Project $\rightarrow$ **Clean and Build** để Maven tự động tải dependencies.
 3. Cấu hình máy chủ Tomcat:
@@ -296,7 +296,7 @@ public class DBContext {
    * Chuột phải vào Project $\rightarrow$ **Properties** $\rightarrow$ Mục **Run** $\rightarrow$ Chọn Server là Tomcat 10.1 vừa thêm.
 4. Chuột phải vào Project $\rightarrow$ **Run** (Phím tắt `F6`).
 
-#### **Cách 2: Sử dụng IntelliJ IDEA Ultimate**
+#### Cách 2: Sử dụng IntelliJ IDEA Ultimate
 1. Mở IntelliJ $\rightarrow$ **Open** $\rightarrow$ Chọn thư mục chứa file `pom.xml`.
 2. Đợi Maven import và sync toàn bộ thư viện.
 3. Chọn **Add Configuration...** $\rightarrow$ Chọn **Tomcat Server** $\rightarrow$ **Local**.
@@ -307,7 +307,7 @@ public class DBContext {
 
 ---
 
-### **8.5. Bước 4: Truy cập hệ thống**
+### 8.5. Bước 4: Truy cập hệ thống
 
 Sau khi máy chủ khởi động thành công, mở trình duyệt web và truy cập:
 
@@ -316,11 +316,11 @@ Sau khi máy chủ khởi động thành công, mở trình duyệt web và truy
   http://localhost:8080/SWP391-QuanLyMayPhatDien-G1/authen?action=login
   ```
   *(Hoặc đường dẫn rút gọn `http://localhost:8080/SWP391-QuanLyMayPhatDien-G1/home` hệ thống sẽ tự động điều hướng).*
-* Đăng nhập với tài khoản `admin` / `admin123` để bắt đầu trải nghiệm hệ thống!
+* Đăng nhập với tài khoản `admin` / `admin123` để bắt đầu trải nghiệm hệ thống.
 
 ---
 
-## 📊 9. Tài liệu Phân tích & Thiết kế (Documentation)
+## 9. Tài liệu Phân tích & Thiết kế (Documentation)
 
 Các tài liệu thiết kế và sơ đồ kỹ thuật chi tiết của dự án được lưu trữ trong thư mục [document/](document/):
 * [package diagram.png](document/package%20diagram.png): Sơ đồ quan hệ phân rã giữa các package Controller, Entity, DAO.
@@ -331,9 +331,9 @@ Các tài liệu thiết kế và sơ đồ kỹ thuật chi tiết của dự �
 
 ---
 
-## 👨‍💻 10. Thông tin Nhóm dự án & Giảng viên (Team Members)
+## 10. Thông tin Nhóm dự án & Giảng viên (Team Members)
 
-### **Nhóm phát triển: Group 1 — SWP391**
+### Nhóm phát triển: Group 1 — SWP391
 | STT | Họ và tên | Mã sinh viên (MSSV) | Vai trò trong nhóm | Phân hệ phụ trách chính | GitHub Profile |
 | :---: | :--- | :---: | :---: | :--- | :--- |
 | **1** | **Nguyễn Văn Khánh** (Leader) | *[Điền MSSV]* | Trưởng nhóm / Fullstack | Phân quyền RBAC, Mua sắm (PO), Tồn kho & Điều chuyển | [@Khanhnv26](https://github.com/Khanhnv26) |
@@ -347,7 +347,7 @@ Các tài liệu thiết kế và sơ đồ kỹ thuật chi tiết của dự �
 
 ---
 
-## ❓ 11. Xử lý lỗi thường gặp (Troubleshooting)
+## 11. Xử lý lỗi thường gặp (Troubleshooting)
 
 1. **Lỗi kết nối Cơ sở dữ liệu (`SQLException: Access denied for user...` hoặc `Communications link failure`):**
    * Kiểm tra dịch vụ MySQL Server đã được khởi động chưa (`services.msc` trên Windows).
@@ -363,7 +363,7 @@ Các tài liệu thiết kế và sơ đồ kỹ thuật chi tiết của dự �
 
 ---
 
-## 📜 12. Giấy phép & Bản quyền (License)
+## 12. Giấy phép & Bản quyền (License)
 
 Dự án được phát triển phục vụ mục đích học tập và bảo vệ đồ án môn học **SWP391** tại **Đại học FPT**.  
 Mọi quyền sở hữu mã nguồn thuộc về Nhóm 1 và các thành viên đóng góp.
