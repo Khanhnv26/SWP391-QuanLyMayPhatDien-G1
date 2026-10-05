@@ -70,12 +70,6 @@
                             <input name="search" value="<c:out value='${search}'/>" placeholder="Tìm theo mã phiếu nhập, mã phiếu mua, người tạo" autocomplete="off" />
                         </div>
 
-                        <select class="filter-select" name="status" onchange="this.form.submit()">
-                            <option value="">Trạng thái: Tất cả</option>
-                            <option value="PENDING" <c:if test="${statusFilter == 'PENDING'}">selected</c:if>>Chờ duyệt</option>
-                            <option value="COMPLETED" <c:if test="${statusFilter == 'COMPLETED'}">selected</c:if>>Hoàn thành</option>
-                            <option value="CANCELLED" <c:if test="${statusFilter == 'CANCELLED'}">selected</c:if>>Đã từ chối</option>
-                        </select>
 
 
                         <div class="spacer"></div>

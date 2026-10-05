@@ -25,8 +25,11 @@ import com.quanlymayphatdien.g1.entity.Generator;
 import com.quanlymayphatdien.g1.entity.Receipt;
 import com.quanlymayphatdien.g1.entity.ReceiptDetail;
 import com.quanlymayphatdien.g1.entity.User;
+import com.quanlymayphatdien.g1.entity.Warehouse;
 import com.quanlymayphatdien.g1.utils.GlobalUtils;
 import com.quanlymayphatdien.g1.utils.NotificationUtil;
+import com.quanlymayphatdien.g1.utils.WarehouseAccessUtil;
+import java.util.Collections;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
@@ -123,18 +126,32 @@ public class LiquidationController extends HttpServlet {
         }
     }
 
-    // Hiển thị màn tạo đơn: render danh sách máy server-side (JSTL), không dùng AJAX/JSON.
+    // Hiển thị màn tạo đơn
     private void showCreateView(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        HttpSession session = request.getSession(false);
+        int scopedWarehouseId = WarehouseAccessUtil.getScopedWarehouseId(session);
+
         request.setAttribute("reasons", categoryDAO.findByType("liquidation_reason"));
-        request.setAttribute("warehouses", warehouseDAO.findAll());
         request.setAttribute("customerTypes", categoryDAO.findByType("customer_type"));
 
+        if (scopedWarehouseId > 0) {
+            Warehouse scoped = warehouseDAO.findById(scopedWarehouseId);
+            request.setAttribute("warehouses", scoped != null ? Collections.singletonList(scoped) : Collections.emptyList());
+            request.setAttribute("scopedWarehouseId", scopedWarehouseId);
+        } else {
+            request.setAttribute("warehouses", warehouseDAO.findAll());
+        }
+
         Integer warehouseId = null;
-        String whParam = request.getParameter("warehouseId");
-        if (whParam != null && !whParam.trim().isEmpty()) {
-            try {
-                warehouseId = Integer.parseInt(whParam.trim());
-            } catch (NumberFormatException ignore) {
+        if (scopedWarehouseId > 0) {
+            warehouseId = scopedWarehouseId;
+        } else {
+            String whParam = request.getParameter("warehouseId");
+            if (whParam != null && !whParam.trim().isEmpty()) {
+                try {
+                    warehouseId = Integer.parseInt(whParam.trim());
+                } catch (NumberFormatException ignore) {
+                }
             }
         }
         request.setAttribute("selectedWarehouseId", warehouseId);
@@ -205,8 +222,6 @@ public class LiquidationController extends HttpServlet {
     }
 
     // Build danh sách máy phẳng để render bảng, giữ nguyên thứ tự của inStock
-    // (DAO đã sắp Hỏng->Kém->Tốt). Mỗi row: serialNumber, generatorId, model,
-    // unitPrice, condition, createdAtStr, selected.
     private List<Map<String, Object>> buildPickRows(List<Inventory> inStock, Set<String> selectedSerials) {
         java.time.format.DateTimeFormatter df = java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy");
         Map<Integer, BigDecimal> priceCache = new HashMap<>();
@@ -387,7 +402,7 @@ public class LiquidationController extends HttpServlet {
 
         request.setAttribute("customerTypes", categoryDAO.findByType("customer_type"));
 
-        // === EDIT MODE DATA (inline editing on detail page, replacing separate edit page) ===
+       
         String st = l.getStatus();
         boolean isEditMode = GlobalUtils.LIQUIDATION_STATUS_CEO_REQUEST_EDIT.equals(st);
         request.setAttribute("isEditMode", isEditMode);
@@ -452,7 +467,7 @@ public class LiquidationController extends HttpServlet {
             List<Inventory> inStock = inventoryDAO.findEligibleForLiquidation(whId, 6, condSql, page, pageSize);
             List<Map<String, Object>> pickRows = buildPickRows(inStock, selectedSerials);
 
-            // Add missing serials (PENDING_LIQUIDATION) for same warehouse
+    
             if (sameWarehouse) {
                 Set<String> inStockSerials = new LinkedHashSet<>();
                 for (Inventory inv : inStock) {
@@ -497,7 +512,7 @@ public class LiquidationController extends HttpServlet {
                 }
             }
 
-            // Prefill prices from existing details
+    
             Map<String, BigDecimal> liqPriceBySerial = new HashMap<>();
             for (LiquidationDetail d : details) {
                 liqPriceBySerial.put(d.getSerialNumber(), d.getLiquidationPrice());
@@ -661,8 +676,16 @@ public class LiquidationController extends HttpServlet {
     }
 
     private void handleCreate(HttpServletRequest request, HttpServletResponse response, User user) throws Exception {
+        HttpSession session = request.getSession(false);
+        int scopedWarehouseId = WarehouseAccessUtil.getScopedWarehouseId(session);
+
         int reasonId = Integer.parseInt(request.getParameter("reasonId"));
         int warehouseId = Integer.parseInt(request.getParameter("warehouseId"));
+
+        if (scopedWarehouseId > 0 && scopedWarehouseId != warehouseId) {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN);
+            return;
+        }
         String[] generatorIds = request.getParameterValues("generatorId");
         String[] serialNumbers = request.getParameterValues("serialNumber");
         String[] liquidationPrices = request.getParameterValues("liquidationPrice");
